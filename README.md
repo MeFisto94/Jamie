@@ -39,7 +39,7 @@ For updating the bot with the latest sources run
 
 if there is an update available, it will be downloaded and the bot will restart.
 
-You can add this command to the crontab if you want to make it autoupdate.
+If you want to make the bot autoupdate, you can add the command to the crontab.
 
 Just run
 

@@ -23,8 +23,10 @@ SlackRubyBot.configure do |config|
     config.aliases = ['jaime', 'jamie?', 'jaime?']
 end
 
-Jaime::Vault.setupAndLoad("vault.json")
-Jaime::Bets.setupAndLoad("bets.json")
+vault = Jaime::Vault.new("vault.json")
+vault.load()
+bets = Jaime::Bets.new("bets.json")
+bets.load()
 
 begin
     Jaime::Bot.run

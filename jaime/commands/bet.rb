@@ -6,12 +6,12 @@ module Jaime
                     # Start a new bet...
                     matches = /start (\w+) (int|bool)/.match(_match["expression"]);
                     
-                    Jaime::Bets.getLock().synchronize do # Fuck all this API shit, we do it directly :P
-                        if (Jaime::Bets.getBets()[matches[1]] != nil) then
+                    Jaime::Bets::this().getLock().synchronize do # Fuck all this API shit, we do it directly :P
+                    if (Jaime::Bets::this().getBets()[matches[1]] != nil) then
                             Jaime::Util::replyByWhisper(client, data, "Error: Can't start that bet because there is already a bet running called #{matches[1]}", false);
                         else
                             BaseCapital = Jaime::BetBaseCapitalMin + Random.new.rand(BetBaseCapitalMax - BetBaseCapitalMin);
-                            Jaime::Bets::getBets()[matches[1]] = {
+                            Jaime::Bets::this().getBets()[matches[1]] = {
                                 "name" => matches[1],
                                 "type" => matches[2],
                                 "bets" => [
@@ -23,7 +23,7 @@ module Jaime
                                 ]
                             };
                             
-                            Jaime::Bets::internalSave();
+                            Jaime::Bets::this().internalSave();
                             
                             client.say(channel: data.channel, text: ":banana: A new Bet has been started. What is your guess? :banana:\nWhat Value will #{matches[1]} have? Join the Bet!\nNote: I've placed #{BaseCapital}x :banana: in the Pot.");
                         end
@@ -39,29 +39,28 @@ module Jaime
                         return;
                     end
                     
-                    Jaime::Bets.getLock().synchronize do
-                        if (Jaime::Bets.getBets()[bet_name] == nil) then
+                    Jaime::Bets::this().getLock().synchronize do
+                        if (Jaime::Bets::this().getBets()[bet_name] == nil) then
                             Jaime::Util::replyByWhisper(client, data, "Error: Can't place your bet because there is no bet running called #{bet_name}", false);
                         else
-                            bet = Jaime::Bets.getBets()[bet_name];
+                            bet = Jaime::Bets::this().getBets()[bet_name];
                             
-                            if Jaime::Bets.internalIsBetBoolean(bet) then
-                                if Jaime::Bets.isValueBoolean(value) then
-                                    if Jaime::Bets.internalGetBetsByUserId(bet, data.user) != nil then # Try to adjust current bets
-                                        usr_bets = Jaime::Bets.internalGetBetsByUserId(bet, data.user);
+                            if Jaime::Bets::this().internalIsBetBoolean(bet) then
+                                if Jaime::Bets::this().isValueBoolean(value) then
+                                    if Jaime::Bets::this().internalGetBetsByUserId(bet, data.user) != nil then # Try to adjust current bets
+                                        usr_bets = Jaime::Bets::this().internalGetBetsByUserId(bet, data.user);
                                         
                                         usr_bets.each do |b|
                                             if (b["on"] == value) then
                                                 b["amount"] += amount;
                                                 Jaime::Util::replyByWhisper(client, data, "Note: Your bet on #{value} has been updated. Current input: #{b["amount"]}x :banana:");
                                                 
-                                                vault = Jaime::Vault::getUserVaultEx(client, data.user);
-                                                Jaime::Vault::adjustAccountBalance(vault, -amount);
-                                                Jaime::Util::WhisperUser(client, data.user, "[GAMBLING]: You just paid #{amount}x :banana: to participate in the Bet `#{bet_name}`!\nNew Balance: #{Jaime::Vault::getAccountBalance(vault).to_s}x :banana:");
-                                                Jaime::Vault.Save(); #TODO: FIX ME (Maybe make mutex no class variable of Savable, atleast so it's now VAULT or BET)
-
+                                                vault = Jaime::Vault::this().getUserVaultEx(client, data.user);
+                                                Jaime::Vault::this().adjustAccountBalance(vault, -amount);
+                                                Jaime::Util::WhisperUser(client, data.user, "[GAMBLING]: You just paid #{amount}x :banana: to participate in the Bet `#{bet_name}`!\nNew Balance: #{Jaime::Vault::this().getAccountBalance(vault).to_s}x :banana:");
+                                                Jaime::Vault::this().save();
                                                 amount = 0;
-                                                Jamie::Bets.internalSave();
+                                                Jamie::Bets::this().internalSave();
                                             end
                                         end
                                     end
@@ -70,18 +69,18 @@ module Jaime
                                         bet["bets"] += [ {"userId" => data.user, "amount" => amount, "on" => value} ];
                                         Jaime::Util::replyByWhisper(client, data, "Note: Your bet on #{value} has been successfully placed. Current input: #{amount}x :banana:", false);
                                         
-                                        vault = Jaime::Vault::getUserVaultEx(client, data.user);
-                                        Jaime::Vault::adjustAccountBalance(vault, -amount);
-                                        Jaime::Util::WhisperUser(client, data.user, "[GAMBLING]: You just paid #{amount}x :banana: to participate in the Bet `#{bet_name}`!\nNew Balance: #{Jaime::Vault::getAccountBalance(vault).to_s}x :banana:");
-                                        Jaime::Vault.Save();
-                                        Jaime::Bets.internalSave();
+                                        vault = Jaime::Vault::this().getUserVaultEx(client, data.user);
+                                        Jaime::Vault::this().adjustAccountBalance(vault, -amount);
+                                        Jaime::Util::WhisperUser(client, data.user, "[GAMBLING]: You just paid #{amount}x :banana: to participate in the Bet `#{bet_name}`!\nNew Balance: #{Jaime::Vault::this().getAccountBalance(vault).to_s}x :banana:");
+                                        Jaime::Vault::this().save();
+                                        Jaime::Bets::this().internalSave();
                                     end
                                 else
                                     Jaime::Util::replyByWhisper(client, data, "Error: Can't place your bet because the bet is booleanic (true/false) but you didn't bet on a boolean.", false);
                                 end
-                            elsif Jaime::Bets.internalIsBetInteger(bet) then
-                                if Jaime::Bets.isValueInteger(value) then
-                                    # Handle with care
+                            elsif Jaime::Bets::this().internalIsBetInteger(bet) then
+                                if Jaime::Bets::this().isValueInteger(value) then
+                                    Jaime::Util::replyByWhisper(client, data, "TODO: IMPLEMENT!");
                                 else
                                     Jaime::Util::replyByWhisper(client, data, "Error: Can't place your bet because the bet is of type integer (numbers) but you didn't bet on a number.", false);
                                 end
@@ -93,22 +92,22 @@ module Jaime
                     bet_name = matches[1];
                     value = matches[2];
 
-                    Jaime::Bets.getLock().synchronize do
-                        if (Jaime::Bets.getBets()[bet_name] == nil) then
+                    Jaime::Bets::this().getLock().synchronize do
+                        if (Jaime::Bets::this().getBets()[bet_name] == nil) then
                             client.say(channel: data.channel, text: "Error: Cannot End the Bet #{bet_name} since there is currently no such bet running... :see_no_evil:");
                         else
-                            bet = Jaime::Bets.getBets()[bet_name];
-                            if (Jaime::Bets.internalIsBetInteger(bet)) then
-                                if (Jaime::Bets.isValueInteger(value)) then
+                            bet = Jaime::Bets::this().getBets()[bet_name];
+                            if (Jaime::Bets::this().internalIsBetInteger(bet)) then
+                                if (Jaime::Bets::this().isValueInteger(value)) then
                                     client.say(channel: data.channel, text: "TODO: IMPLEMENT!");
-                                    Jaime::Bets.getBets()[bet_name] = nil;
-                                    Jaime::Bets.internalSave();
+                                    Jaime::Bets::this().getBets()[bet_name] = nil;
+                                    Jaime::Bets::this().internalSave();
                                 else
                                     client.say(channel: data.channel, text: "Error: Cannot End the Bet #{bet_name} because you entered a bool type but it's not of type bool...");
                                 end
-                            elsif (Jaime::Bets.internalIsBetBoolean(bet)) then
-                                if (Jaime::Bets.isValueBoolean(value)) then
-                                    jackpot = Jaime::Bets.internalGetJackpot(bet);
+                            elsif (Jaime::Bets::this().internalIsBetBoolean(bet)) then
+                                if (Jaime::Bets::this().isValueBoolean(value)) then
+                                    jackpot = Jaime::Bets::this().internalGetJackpot(bet);
                                     client.say(channel: data.channel, text: ":banana: Ring Ding Ding! Rien ne vas plus.... :banana:");
                                     client.say(channel: data.channel, text: "The Bet `#{bet_name}` has been finished. The Jackpot is #{jackpot}x :banana:");
                                     
@@ -128,17 +127,17 @@ module Jaime
                                     winners.each do |w|
                                         percentage = w["amount"] / sum_input_winners;
                                         str = "#{str}\n<@#{w["userId"]}> #{percentage * jackpot}x Banana by betting #{w["amount"]} on #{w["on"]}"
-                                        vault = Jaime::Vault::getUserVaultEx(client, userId);
-                                        Jaime::Vault::adjustAccountBalance(vault, (percentage * jackpot));
-                                        Jaime::Util::WhisperUser(client, userId, "[GAMBLING]: Yeah! You have just won #{percentage * jackpot}x :banana: by Gambling. Enjoy those delicious Bananas!.\nNew Balance: #{Jaime::Vault::getAccountBalance(vault).to_s}x :banana:");
-                                        Jaime::Vault.save();
+                                        vault = Jaime::Vault::this().getUserVaultEx(client, w["userId"]);
+                                        Jaime::Vault::this().adjustAccountBalance(vault, (percentage * jackpot));
+                                        Jaime::Util::WhisperUser(client, w["userId"], "[GAMBLING]: Yeah! You have just won #{percentage * jackpot}x :banana: by Gambling. Enjoy those delicious Bananas!.\nNew Balance: #{Jaime::Vault::this().getAccountBalance(vault).to_s}x :banana:");
+                                        Jaime::Vault::this().save();
                                     end
                                     
                                     str = "#{str}\n```\nThanks for Playing :glitch_crab:";
                                     client.say(channel: data.channel, text: str);
                                     
-                                    Jaime::Bets.getBets()[bet_name] = nil;
-                                    Jaime::Bets.internalSave();
+                                    Jaime::Bets::this().getBets()[bet_name] = nil;
+                                    Jaime::Bets::this().internalSave();
                                 else
                                     client.say(channel: data.channel, text: "Error: Cannot End the Bet #{bet_name} because you entered a non-bool type but it's of type bool...");
                                 end
@@ -148,10 +147,10 @@ module Jaime
                 elsif /list/.match(_match["expression"]) then
                     str = ":banana: Currently running Bets: :banana:\n```"
                     
-                    Jaime::Bets.getLock().synchronize do
-                        Jaime::Bets.getBets().each do |k, v|
+                    Jaime::Bets::this().getLock().synchronize do
+                        Jaime::Bets::this().getBets().each do |k, v|
                             if v != nil then
-                                str = "#{str}\n#{k} => type=#{v["type"]}, jackpot=#{Jaime::Bets.internalGetJackpot(v)}";
+                                str = "#{str}\n#{k} => type=#{v["type"]}, jackpot=#{Jaime::Bets::this().internalGetJackpot(v)}";
                             end
                         end
                     end
@@ -165,20 +164,31 @@ module Jaime
 
     class Bets < Jaime::Savable
         
+        def initialize(filename)
+            super(filename);
+            @@this = self;
+        end
+        
+        ## Intentionally we would want some Class Variables, but since their shared between all Savables Children
+        ## we had to convert it to instance variables and support this() instead (assuming you only have one instance of vault)
+        ## If you'd plan to have multiple (banana, apples) then you have to pass the instance somehow.
+        def self.this()
+            return @@this;
+        end
+
         ## Be advised: Using getBets() leads to thousands of bugs because you forget to call save()
-        def self.getBets()
+        def getBets()
             return getData();
         end
 
-        def self.getJackpot(bet)
+        def getJackpot(bet)
             getLock().synchronize do
                 return internalGetJackpot(bet);
             end
         end
 
-        def self.internalGetJackpot(bet)
+        def internalGetJackpot(bet)
             val = 0;
-            puts bet["bets"].pretty_inspect
             bet["bets"].each do |v|
                 val += v["amount"]
             end
@@ -187,32 +197,32 @@ module Jaime
         end
 
         ## REGION isBetXYZ()
-        def self.isBetBoolean(bet)
+        def isBetBoolean(bet)
             getLock().synchronize do
                 return internalIsBetBoolean(bet);
             end
         end
 
-        def self.internalIsBetBoolean(bet)
+        def internalIsBetBoolean(bet)
             return bet["type"] == "bool";
         end
 
-        def self.isBetInteger(bet)
+        def isBetInteger(bet)
             getLock().synchronize do
                 return internalIsBetInteger(bet);
             end
         end
 
-        def self.internalIsBetInteger(bet)
+        def internalIsBetInteger(bet)
             return bet["type"] == "int";
         end
 
         ## REGION isValueXYZ()
-        def self.isValueBoolean(val)
+        def isValueBoolean(val)
             return val == "true" || val == "false";
         end
 
-        def self.isValueInteger(val)
+        def isValueInteger(val)
             return (/\d+/.match(val) != nil);
         end
 
@@ -223,7 +233,7 @@ module Jaime
             end
         end
 
-        def self.internalGetBetsByUserId(bet, userId)
+        def internalGetBetsByUserId(bet, userId)
             return bet.select{|value| value["userId"] == userId };
         end
     end

@@ -28,7 +28,7 @@ function status {
 }
 
 function install { 
-    sudo apt-get install ruby screen gem
+    sudo apt-get install git ruby screen gem
     sudo gem install bundler
     bundle install
 }

@@ -10,7 +10,12 @@ module Jaime
                     if (Jaime::Bets::this().getBets()[matches[1]] != nil) then
                             Jaime::Util::replyByWhisper(client, data, "Error: Can't start that bet because there is already a bet running called #{matches[1]}", false);
                         else
-                            BaseCapital = Jaime::BetBaseCapitalMin + Random.new.rand(BetBaseCapitalMax - BetBaseCapitalMin);
+                            if (Jaime::Util::isAdmin(data.user)) then # To prevent abuse
+                                BaseCapital = Jaime::BetBaseCapitalMin + Random.new.rand(BetBaseCapitalMax - BetBaseCapitalMin);
+                            else
+                                BaseCapital = 0
+                            end
+        
                             Jaime::Bets::this().getBets()[matches[1]] = {
                                 "name" => matches[1],
                                 "type" => matches[2],

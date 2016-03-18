@@ -4,6 +4,8 @@ module Jaime
     
     ADMIN_USERS = [ "U0P7BK890" ];
     StartCapital = 1000
+    BetBaseCapitalMin = 50
+    BetBaseCapitalMax = 200
     
     ABOUT = "Jamie \"The Gambler\" v0.0.1 alpha-1 <@dokthar, @darkchaos>\nI'm just your usual Monkey-Next-Door. Well I'm the Croupier of #general...\nUse \"Jamie help\" to see what I'm capable of and use help <topic> to dig further..."
     #HELP = "Nobody will help you, ever. <@#{data.user}>, you're lost! <##{data.channel}> Client: #{client} Data: #{data} Match: #{_match}"

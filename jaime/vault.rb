@@ -61,9 +61,9 @@ module Jaime
         end
     end
 
-    class Vault
-        @@mutex = Mutex.new;
-        @@data = {};
+    class Vault < Jaime::Savable
+        @mutex = Mutex.new;
+        @data = {};
         
         def self.getUserVaultEx(client, userId)
             usr_vault = getUserVault(userId);
@@ -76,17 +76,17 @@ module Jaime
         end
 
         def self.getUserVault(userId)
-            @@mutex.synchronize do
-                return @@data[userId];
+            getLock().synchronize do
+                return getData()[userId];
             end
         end
 
         def self.createUserVault(userId, capital)
             usr_vault = nil;
-            @@mutex.synchronize do
-                @@data[userId] = { "userId" => userId, "balance" => capital }
+            getLock().synchronize do
+                getData()[userId] = { "userId" => userId, "balance" => capital }
                 internalSave();
-                usr_vault = @@data[userId];
+                usr_vault = getData()[userId];
             end
 
             return usr_vault;
@@ -97,7 +97,7 @@ module Jaime
                 return 0;
             else
                 bal = 0; # so it's available inside the block and won't be threaded as block-local-var
-                @@mutex.synchronize do
+                getLock().synchronize do
                     bal = vault["balance"];
                 end
                 return bal;
@@ -106,7 +106,7 @@ module Jaime
 
         def self.setAccountBalance(vault, balance)
             if (vault != nil) then
-                @@mutex.synchronize do
+                getLock().synchronize do
                     vault["balance"] = balance;
                     internalSave()
                 end
@@ -115,45 +115,19 @@ module Jaime
 
         def self.adjustAccountBalance(vault, adjustment)
             if (vault != nil) then
-                @@mutex.synchronize do
+                getLock().synchronize do
                     vault["balance"] += adjustment;
                     internalSave()
                 end
             end
         end
 
-        ## DON'T CALL FROM USERCODE. NOT THREADSAFE.
-        def self.internalSave()
-            File.open("vault.json", "w") do |f|
-                f.write(@@data.to_json);
-            end
-        end
-
-        def self.save()
-            @@mutex.synchronize do
-                self.internalSave();
-            end
-        end
-
-        ## DON'T CALL FROM USERCODE. NOT THREADSAFE.
-        def self.internalLoad()
-            if (File.exists?('vault.json')) then
-                @@data = JSON.parse(File.read('vault.json'))
-            else
-                @@data = {}
-            end
-        end
-
-        def self.load()
-            @@mutex.synchronize do
-                self.internalLoad();
-            end
-        end
-
-        ## For internal Manipulations of the data-hash. NEVER CALL ANY VAULT METHOD INSIDE THE LOCK!! (DEADLOCK)
         def self.getLock()
-            return @@mutex;
+            return @mutex;
         end
 
+        def self.getData()
+            return @data;
+        end
     end
 end

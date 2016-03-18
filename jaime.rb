@@ -10,11 +10,12 @@ require 'net/http'
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
 require 'slack-ruby-bot'
-require 'jaime/commands/bet'
-require 'jaime/commands/help'
 require 'jaime/bot'
 require 'jaime/util'
+require 'jaime/savable'
 require 'jaime/vault'
+require 'jaime/commands/bet'
+require 'jaime/commands/help'
 
 Dotenv.load
 
@@ -22,7 +23,8 @@ SlackRubyBot.configure do |config|
     config.aliases = ['jaime', 'jamie?', 'jaime?']
 end
 
-Jaime::Vault.load()
+Jaime::Vault.setupAndLoad("vault.json")
+Jaime::Bets.setupAndLoad("bets.json")
 
 begin
     Jaime::Bot.run

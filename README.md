@@ -25,8 +25,29 @@ end
 ```
 Use this to catch up typos and the "?" and stuff.  
 
-## How to Build/Start
-First install the dependencies using `sudo gem install -g Gemfile` however `bundler install` should work aswell.  
+## Installation 
+Clone this repo and run
+
+``` cd /jamie/folder && ./jamie.sh install ```
+
 Note: Sometimes you receieve compilation errors due to missing C-Header Files on your System. Use Google for that.  
-Then simply call `./jaime.rb` or `ruby jaime.rb` and see what happens.  
-If you're not debugging, we recommend appending `> /dev/null` so it's not so spammy :)
+
+## Update and Auto update
+For updating the bot with the latest sources run
+
+``` cd /jamie/folder && ./jamie.sh update ``
+
+if there is an update available, it will be downloaded and the bot will restart.
+
+You can add this command to the crontab if you want to make it autoupdate.
+
+Just run
+
+```crontab -e```
+
+and add at the end
+
+```*/5 * * * * cd /jamie/folder && ./jamie.sh update ```
+
+this will try to update the bot every 5 minutes.
+

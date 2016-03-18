@@ -1,0 +1,50 @@
+#!/bin/bash
+
+SESSION_NAME="jamie"
+
+function start {
+    echo "Start!"
+    screen -d -m -S $SESSION_NAME `which ruby` jaime.rb
+}
+
+function stop {
+    echo "Stop!"
+    screen -d $SESSION_NAME
+    screen -X -S $SESSION_NAME quit
+}
+
+function restart {
+    echo "Restart!"
+    stop
+    start
+}
+
+function status {
+    if [ `screen -ls | grep -c "$SESSION_NAME"` = "0" ]; then
+        echo "stopped"
+    else
+        echo "running"
+    fi
+}
+
+function install { 
+    sudo apt-get install ruby screen gem
+    sudo gem install bundler
+    bundle install
+}
+
+function update {
+    if [ "`git pull`" != "Already up-to-date." ]; then
+        if [ "`status`" = "running" ]; then restart; fi
+    fi
+}
+
+function help {
+  echo "help , install , update , start , stop , restart , status"   
+}
+
+if [ "$1" = "" ]; then
+    help
+else
+    $1
+fi

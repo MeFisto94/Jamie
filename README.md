@@ -18,9 +18,15 @@ ABOUT=...
 Please clearly state that you're not Jamie.  
 The Bot will automatically listen to the Name you gave him during API TOKEN GENERATION, so you need to edit our Aliases found in `jaime.rb` (which is btw the main file)  
 
-```
+```ruby
 SlackRubyBot.configure do |config|
     config.aliases = ['jaime', 'jamie?', 'jaime?']
 end
 ```
 Use this to catch up typos and the "?" and stuff.  
+
+## How to Build/Start
+First install the dependencies using `sudo gem install -g Gemfile` however `bundler install` should work aswell.  
+Note: Sometimes you receieve compilation errors due to missing C-Header Files on your System. Use Google for that.  
+Then simply call `./jaime.rb` or `ruby jaime.rb` and see what happens.  
+If you're not debugging, we recommend appending `> /dev/null` so it's not so spammy :)

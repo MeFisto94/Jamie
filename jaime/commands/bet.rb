@@ -2,9 +2,9 @@ module Jaime
     module Commands
         class Bet < SlackRubyBot::Commands::Base
             command 'bet' do |client, data, _match|
-                if /start (\w+) (int|bool)/.match(_match["expression"]) then
+                if /start (.+) (int|bool)/.match(_match["expression"]) then
                     # Start a new bet...
-                    matches = /start (\w+) (int|bool)/.match(_match["expression"]);
+                    matches = /start (.+) (int|bool)/.match(_match["expression"]);
                     
                     Jaime::Bets::this().getLock().synchronize do # Fuck all this API shit, we do it directly :P
                     if (Jaime::Bets::this().getBets()[matches[1]] != nil) then
@@ -25,11 +25,11 @@ module Jaime
                             
                             Jaime::Bets::this().internalSave();
                             
-                            client.say(channel: data.channel, text: ":banana: A new Bet has been started. What is your guess? :banana:\nWhat Value will #{matches[1]} have? Join the Bet!\nNote: I've placed #{BaseCapital}x :banana: in the Pot.");
+                            client.say(channel: data.channel, text: ":banana: A new Bet has been started. What is your guess? :banana:\nWhat value will `#{matches[1]}` have? Join the Bet!\nNote: I've placed #{BaseCapital}x :banana: in the Pot.");
                         end
                     end
-                elsif /place (\w+) (\d+|\w+) (\d+)/.match(_match["expression"]) then
-                    matches = /place (\w+) (\d+|\w+) (\d+)/.match(_match["expression"]);
+                elsif /place (.+) (\d+|\w+) (\d+)/.match(_match["expression"]) then
+                    matches = /place (.+) (\d+|\w+) (\d+)/.match(_match["expression"]);
                     bet_name = matches[1]
                     value = matches[2]
                     amount = matches[3].to_i
@@ -87,8 +87,8 @@ module Jaime
                             end
                         end
                     end
-                elsif /end (\w+) (\d+|\w+)/.match(_match["expression"]) then
-                    matches = /end (\w+) (\d+|\w+)/.match(_match["expression"]);
+                elsif /end (.+) (\d+|\w+)/.match(_match["expression"]) then
+                    matches = /end (.+) (\d+|\w+)/.match(_match["expression"]);
                     bet_name = matches[1];
                     value = matches[2];
 

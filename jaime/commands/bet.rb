@@ -49,29 +49,28 @@ module Jaime
                                 if Jaime::Bets::this().isValueBoolean(value) then
                                     if Jaime::Bets::this().internalGetBetsByUserId(bet, data.user) != nil then # Try to adjust current bets
                                         usr_bets = Jaime::Bets::this().internalGetBetsByUserId(bet, data.user);
-                                        
                                         usr_bets.each do |b|
-                                            if (b["on"] == value) then
+                                            if ((b["on"] == value) && (amount != 0)) then
                                                 b["amount"] += amount;
-                                                Jaime::Util::replyByWhisper(client, data, "Note: Your bet on #{value} has been updated. Current input: #{b["amount"]}x :banana:");
+                                                Jaime::Util::replyByWhisper(client, data, "[GAMBLING]: Your bet on #{value} has been updated. Current input: #{b["amount"]}x :banana:", false);
                                                 
                                                 vault = Jaime::Vault::this().getUserVaultEx(client, data.user);
                                                 Jaime::Vault::this().adjustAccountBalance(vault, -amount);
-                                                Jaime::Util::WhisperUser(client, data.user, "[GAMBLING]: You just paid #{amount}x :banana: to participate in the Bet `#{bet_name}`!\nNew Balance: #{Jaime::Vault::this().getAccountBalance(vault).to_s}x :banana:");
+                                                Jaime::Util::WhisperUser(client, data.user, "[VAULT]: You just paid #{amount}x :banana: to participate in the Bet `#{bet_name}`!\nNew Balance: #{Jaime::Vault::this().getAccountBalance(vault).to_s}x :banana:");
                                                 Jaime::Vault::this().save();
                                                 amount = 0;
-                                                Jamie::Bets::this().internalSave();
+                                                Jaime::Bets::this().internalSave();
                                             end
                                         end
                                     end
 
                                     if (amount > 0) then # Probably a bet on something new
                                         bet["bets"] += [ {"userId" => data.user, "amount" => amount, "on" => value} ];
-                                        Jaime::Util::replyByWhisper(client, data, "Note: Your bet on #{value} has been successfully placed. Current input: #{amount}x :banana:", false);
+                                        Jaime::Util::replyByWhisper(client, data, "[GAMBLING]: Your bet on #{value} has been successfully placed. Current input: #{amount}x :banana:", false);
                                         
                                         vault = Jaime::Vault::this().getUserVaultEx(client, data.user);
                                         Jaime::Vault::this().adjustAccountBalance(vault, -amount);
-                                        Jaime::Util::WhisperUser(client, data.user, "[GAMBLING]: You just paid #{amount}x :banana: to participate in the Bet `#{bet_name}`!\nNew Balance: #{Jaime::Vault::this().getAccountBalance(vault).to_s}x :banana:");
+                                        Jaime::Util::WhisperUser(client, data.user, "[VAULT]: You just paid #{amount}x :banana: to participate in the Bet `#{bet_name}`!\nNew Balance: #{Jaime::Vault::this().getAccountBalance(vault).to_s}x :banana:");
                                         Jaime::Vault::this().save();
                                         Jaime::Bets::this().internalSave();
                                     end
@@ -129,7 +128,7 @@ module Jaime
                                         str = "#{str}\n<@#{w["userId"]}> #{percentage * jackpot}x Banana by betting #{w["amount"]} on #{w["on"]}"
                                         vault = Jaime::Vault::this().getUserVaultEx(client, w["userId"]);
                                         Jaime::Vault::this().adjustAccountBalance(vault, (percentage * jackpot));
-                                        Jaime::Util::WhisperUser(client, w["userId"], "[GAMBLING]: Yeah! You have just won #{percentage * jackpot}x :banana: by Gambling. Enjoy those delicious Bananas!.\nNew Balance: #{Jaime::Vault::this().getAccountBalance(vault).to_s}x :banana:");
+                                        Jaime::Util::WhisperUser(client, w["userId"], "[VAULT]: Yeah! You have just won #{percentage * jackpot}x :banana: by Gambling. Enjoy those delicious Bananas!\nNew Balance: #{Jaime::Vault::this().getAccountBalance(vault).to_s}x :banana:");
                                         Jaime::Vault::this().save();
                                     end
                                     
@@ -234,7 +233,7 @@ module Jaime
         end
 
         def internalGetBetsByUserId(bet, userId)
-            return bet.select{|value| value["userId"] == userId };
+            return bet["bets"].select{|value| value["userId"] == userId };
         end
     end
 end

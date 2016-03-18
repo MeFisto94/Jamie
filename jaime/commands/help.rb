@@ -11,7 +11,14 @@ module Jaime
     
             def self.getHelp(topic)
                 if topic == 'vault' then
-                    return "Vault help building is currenlty in Progress..."
+                    return "Consider any of the following commands to be prefixed by `vault `:\n" +
+                    "`status` - Lists you current Vault Status (Account Balance)\n" +
+                    "`transmit <@user> <amount>` - Transmit `amount` :banana:s into `@user`'s vault from yours.\n";
+                elsif topic == 'bet' then
+                    return "The following commands will help you participate in bets.\nNote: You get paid based on the amount you've betted, so bet enough ;)\n" +
+                    "`bet start <name> <type>` - Starts a bet called `name` of type `type` (bool or ~int~).\n" +
+                    "`bet place <name> <value> <amount>` - Place `amount` :banana:s on `value` (and bet `name`). Ex: `bet place test-bet true 100`\n" +
+                    "`bet end <name> <value>` - Ends a bet called `name` with `value` being the correct answer";
                 else
                     return "Topic `#{topic}` not found."
                 end

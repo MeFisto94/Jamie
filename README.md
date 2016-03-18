@@ -35,7 +35,7 @@ Note: Sometimes you receieve compilation errors due to missing C-Header Files on
 ## Update and Auto update
 For updating the bot with the latest sources run
 
-``` cd /jamie/folder && ./jamie.sh update ``
+``` cd /jamie/folder && ./jamie.sh update ```
 
 if there is an update available, it will be downloaded and the bot will restart.
 

@@ -3,6 +3,7 @@
 require 'dotenv'
 require 'json'
 require 'rubygems'
+require 'thread'
 require 'pretty_inspect'
 require 'uri'
 require 'net/http'
@@ -16,6 +17,7 @@ require 'jaime/savable'
 require 'jaime/vault'
 require 'jaime/commands/bet'
 require 'jaime/commands/help'
+require 'jaime/commands/vault'
 
 Dotenv.load
 

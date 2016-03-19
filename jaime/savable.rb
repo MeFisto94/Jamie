@@ -16,7 +16,7 @@ module Jaime
 
         def save()
             @mutex.synchronize do
-                self.internalSave();
+                internalSave();
             end
         end
 
@@ -31,7 +31,7 @@ module Jaime
 
         def load()
             @mutex.synchronize do
-                self.internalLoad();
+                internalLoad();
             end
         end
 
@@ -42,6 +42,16 @@ module Jaime
 
         def getData()
             return @data;
+        end
+        
+        def internalRemoveFromData(key)
+            @data.delete(key)
+        end
+        
+        def removeFromData(key)
+            getLock().synchronize do
+                internalRemoveFromData(key);
+            end
         end
     end
 end

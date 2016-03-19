@@ -1,7 +1,5 @@
 module Jaime
     class Vault < Jaime::Savable
-        #@mutex = Mutex.new;
-        #@data = {};
         @@this = nil; # Has to happen on class level and not in Savable.
         
         def initialize(filename)

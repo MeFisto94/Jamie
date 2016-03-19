@@ -17,13 +17,15 @@ module Jaime
                             end
         
                             if (matches[4] == nil) then
-                                matches[4] = "No description provided";
+                                description = "No description provided";
+                            else
+                                description = matches[4];
                             end
         
                             Jaime::Bets::this().getBets()[matches[1]] = {
-                                "name"        => matches[1],
-                                "type"        => matches[2],
-                                "description" => matches[4],
+                                "name"        =>  matches[1],
+                                "type"        =>  matches[2],
+                                "description" => description,
                                 "bets" => [
                                     {
                                         "userId" => "-1",
@@ -36,7 +38,7 @@ module Jaime
                             Jaime::Bets::this().internalSave();
                             
                             if (matches[2] == "bool") then
-                                client.say(channel: data.channel, text: ":banana: A new Bet has been started. What is your guess? :banana:\nWill `#{matches[1]}` be true or false? Join the Bet!\nDescription: #{matches[4]}\nNote: I've placed #{BaseCapital}x :banana: in the Pot.");
+                                client.say(channel: data.channel, text: ":banana: A new Bet has been started. What is your guess? :banana:\nWill `#{matches[1]}` be true or false? Join the Bet!\nDescription: #{description}\nNote: I've placed #{BaseCapital}x :banana: in the Pot.");
                             else
                                 client.say(channel: data.channel, text: "TODO: Implement (bet.rb:37)");
                             end

@@ -2,9 +2,9 @@ module Jaime
     module Commands
         class Bet < SlackRubyBot::Commands::Base
             command 'bet' do |client, data, _match|
-                if /start (.+) (int|bool)/.match(_match["expression"]) then
+                if /start (.+) (int|bool)( (.+))?/.match(_match["expression"]) then
                     # Start a new bet...
-                    matches = /start (.+) (int|bool)/.match(_match["expression"]);
+                    matches = /start (.+) (int|bool)( (.+))?/.match(_match["expression"]);
                     
                     Jaime::Bets::this().getLock().synchronize do # Fuck all this API shit, we do it directly :P
                     if (Jaime::Bets::this().getBets()[matches[1]] != nil) then
@@ -16,9 +16,14 @@ module Jaime
                                 BaseCapital = 0
                             end
         
+                            if (matches[4] == nil) then
+                                matches[4] = "No description provided";
+                            end
+        
                             Jaime::Bets::this().getBets()[matches[1]] = {
-                                "name" => matches[1],
-                                "type" => matches[2],
+                                "name"        => matches[1],
+                                "type"        => matches[2],
+                                "description" => matches[4],
                                 "bets" => [
                                     {
                                         "userId" => "-1",
@@ -30,7 +35,13 @@ module Jaime
                             
                             Jaime::Bets::this().internalSave();
                             
-                            client.say(channel: data.channel, text: ":banana: A new Bet has been started. What is your guess? :banana:\nWhat value will `#{matches[1]}` have? Join the Bet!\nNote: I've placed #{BaseCapital}x :banana: in the Pot.");
+                            if (matches[2] == "bool") then
+                                client.say(channel: data.channel, text: ":banana: A new Bet has been started. What is your guess? :banana:\nWill `#{matches[1]}` be true or false? Join the Bet!\nDescription: #{matches[4]}\nNote: I've placed #{BaseCapital}x :banana: in the Pot.");
+                            else
+                                client.say(channel: data.channel, text: "TODO: Implement (bet.rb:37)");
+                            end
+    
+                            client.say(channel: data.channel, text: "say `Jamie bet place #{matches[1]} <value> <amount>` to join the fun!");
                         end
                     end
                 elsif /place (.+) (\d+|\w+) (\d+)/.match(_match["expression"]) then
@@ -154,7 +165,7 @@ module Jaime
                     Jaime::Bets::this().getLock().synchronize do
                         Jaime::Bets::this().getBets().each do |k, v|
                             if v != nil then
-                                str = "#{str}\n#{k} => type=#{v["type"]}, jackpot=#{Jaime::Bets::this().internalGetJackpot(v)}";
+                                str = "#{str}\n#{k} => type=#{v["type"]}, jackpot=#{Jaime::Bets::this().internalGetJackpot(v)}, description=\"#{v["description"]}\"";
                             end
                         end
                     end

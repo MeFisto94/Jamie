@@ -16,7 +16,7 @@ module Jaime
                     "`transmit <@user> <amount>` - Transmit `amount` :banana:s into `@user`'s vault from yours.\n";
                 elsif topic == 'bet' then
                     return "The following commands will help you participate in bets.\nNote: You get paid based on the amount you've betted, so bet enough ;)\n" +
-                    "`bet start <name> <type>` - Starts a bet called `name` of type `type` (bool or ~int~).\n" +
+                    "`bet start <name> <type> [<description>]` - Starts a bet called `name` of type `type` (bool or ~int~) with the (optional) description `description`.\n" +
                     "`bet place <name> <value> <amount>` - Place `amount` :banana:s on `value` (and bet `name`). Ex: `bet place test-bet true 100`\n" +
                     "`bet end <name> <value>` - Ends a bet called `name` with `value` being the correct answer";
                 else

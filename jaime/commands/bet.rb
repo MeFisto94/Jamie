@@ -205,7 +205,7 @@ module Jaime
                     if (internalIsBetInteger(bet)) then
                         if (isValueInteger(value)) then
                             client.say(channel: data.channel, text: "TODO: IMPLEMENT!");
-                            getBets()[bet_name] = nil;
+                            internalRemoveFromData(bet_name);
                             internalSave();
                             else
                             client.say(channel: data.channel, text: "Error: Cannot End the Bet #{bet_name} because you entered a bool type but it's not of type bool...");
@@ -246,7 +246,7 @@ module Jaime
                             str = "#{str}\n```\nThanks for Playing :glitch_crab:";
                             client.say(channel: data.channel, text: str);
                             
-                            getBets()[bet_name] = nil;
+                            internalRemoveFromData(bet_name);
                             internalSave();
                         else
                             client.say(channel: data.channel, text: "Error: Cannot End the Bet #{bet_name} because you entered a non-bool type but it's of type bool...");

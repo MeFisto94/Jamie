@@ -1,6 +1,6 @@
 module Jaime
     module Commands
-        class Rand < SlackRubyBot::Commands::Base
+        class Roll < SlackRubyBot::Commands::Base
             def rollDices(nbDices, nbFaces)
                 res = Array.new
                 nbDices.abs.times do
@@ -9,7 +9,7 @@ module Jaime
                 return res;
             end
 
-            command 'rand' do |client, data, _match|
+            command 'roll' do |client, data, _match|
                 if (_match["expression"] == nil) then
                     str = "Rolling 1D100 !\n"
                     str += rollDices(1, 100).to_s;

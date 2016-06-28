@@ -18,7 +18,7 @@ require 'jaime/vault'
 require 'jaime/bet'
 require 'jaime/commands/bet'
 require 'jaime/commands/help'
-require 'jaime/commands/rand'
+require 'jaime/commands/roll'
 require 'jaime/commands/vault'
 
 Dotenv.load

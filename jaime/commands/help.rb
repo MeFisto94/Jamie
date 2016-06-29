@@ -19,6 +19,10 @@ module Jaime
                     "`bet start <name> <type> [<description>]` - Starts a bet called `name` of type `type` (bool or ~int~) with the (optional) description `description`.\n" +
                     "`bet place <name> <value> <amount>` - Place `amount` :banana:s on `value` (and bet `name`). Ex: `bet place test-bet true 100`\n" +
                     "`bet end <name> <value>` - Ends a bet called `name` with `value` being the correct answer";
+                elsif topic == 'roll' then
+                    return "This command let jaime roll dices for you.\n" +
+                    "`roll <nb of dices>D<number of faces per dice>` - This will roll `<nb of dices>` times a `<number of faces per dice>` faced dice.\n" +
+                    "Well are you stupid ?.";
                 else
                     return "Topic `#{topic}` not found."
                 end

@@ -22,7 +22,7 @@ module Jaime
                 elsif topic == 'roll' then
                     return "This command let jaime roll dices for you.\n" +
                     "`roll <nb of dices>D<number of faces per dice>` - This will roll `<nb of dices>` times a `<number of faces per dice>` faced dice.\n" +
-                    "Well are you stupid ?.";
+                    "Well are you stupid ?";
                 else
                     return "Topic `#{topic}` not found."
                 end

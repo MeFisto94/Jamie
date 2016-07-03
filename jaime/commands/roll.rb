@@ -1,7 +1,7 @@
 module Jaime
     module Commands
         class Roll < SlackRubyBot::Commands::Base
-            def rollDices(nbDices, nbFaces)
+            def self.rollDices(nbDices, nbFaces)
                 res = Array.new
                 nbDices.abs.times do
                     res.push Random.new.rand(1..nbFaces.abs);
